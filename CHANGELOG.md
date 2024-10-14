@@ -7,3 +7,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - Initial release
+
+## [0.0.1]
+
+### Added
+
+- Automatically switch node version according to .nvmrc after opening the project.
+- Use use-version command to manually switch node versions.
