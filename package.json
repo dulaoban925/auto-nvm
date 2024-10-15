@@ -1,8 +1,23 @@
 {
   "name": "auto-nvm",
   "displayName": "auto-nvm",
-  "description": "auto nvm",
+  "description": "vscode extension that simplifies node version management.",
   "version": "0.0.1",
+  "keywords": [
+    "nvm",
+    "nvmrc",
+    "vscode-nvm",
+    "auth-nvm",
+    "node-version",
+    "NVM"
+  ],
+  "publisher": "SuperYing",
+  "icon": "images/auto-nvm.png",
+  "bugs": "https://github.com/dulaoban925/auto-nvm/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dulaoban925/auto-nvm"
+  },
   "engines": {
     "vscode": "^1.93.0"
   },
@@ -36,6 +51,7 @@
     "lint": "eslint src",
     "test": "vscode-test"
   },
+  "license": "MIT",
   "devDependencies": {
     "@types/vscode": "^1.93.0",
     "@types/mocha": "^10.0.7",
