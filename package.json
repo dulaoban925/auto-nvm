@@ -2,7 +2,7 @@
   "name": "auto-nvm",
   "displayName": "auto-nvm",
   "description": "vscode extension that simplifies node version management.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "keywords": [
     "nvm",
     "nvmrc",
