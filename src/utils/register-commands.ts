@@ -2,7 +2,7 @@
  * 注册命令函数
  */
 import * as vscode from "vscode";
-import { executeNvmUse } from "./utils";
+import { executeNvmUse } from "./nvm";
 
 // 匹配 nvm use 可用的 node 版本写法
 const nvmNodeVersionRegexp = /^(v)?(0|[1-9]\d{0,1})(\.(0|[1-9]\d*)){0,2}$/;
