@@ -7,7 +7,7 @@ import {
   getNodeVersionsInstalled,
   getNodeVersionsNotInstalled,
 } from "./nvm";
-import { setLatestPickedVersion } from "./utils";
+import { setLatestPickedVersion, sortPickedVersions } from "./utils";
 
 // 安装其他版本的选项
 const installOthersOption = "Install Others";
@@ -20,7 +20,7 @@ export function registerUseVersionCommand(ctx: vscode.ExtensionContext) {
     const versionsInstalled = await getNodeVersionsInstalled();
     // 显示输入框
     const pickedVersion = await vscode.window.showQuickPick(
-      versionsInstalled.concat(installOthersOption),
+      sortPickedVersions(ctx, versionsInstalled).concat(installOthersOption),
       {
         title: "Pick specified version",
       }
@@ -38,7 +38,6 @@ export function registerUseVersionCommand(ctx: vscode.ExtensionContext) {
  */
 function useVersionHandler(ctx: vscode.ExtensionContext, version: string) {
   if (version === installOthersOption) {
-    console.log(installOthersOption);
     showNotInstalledNodeVersions(ctx);
     return;
   }
@@ -49,7 +48,6 @@ function useVersionHandler(ctx: vscode.ExtensionContext, version: string) {
 
 async function showNotInstalledNodeVersions(ctx: vscode.ExtensionContext) {
   const versions = await getNodeVersionsNotInstalled();
-  console.log(versions);
   const pickedVersion = await vscode.window.showQuickPick(versions, {
     title: "Install and use specified version",
   });
