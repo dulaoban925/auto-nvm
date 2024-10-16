@@ -2,39 +2,58 @@
  * 注册命令函数
  */
 import * as vscode from "vscode";
-import { executeNvmUse } from "./nvm";
+import {
+  executeNvmUse,
+  getNodeVersionsInstalled,
+  getNodeVersionsNotInstalled,
+} from "./nvm";
+import { setLatestPickedVersion } from "./utils";
 
-// 匹配 nvm use 可用的 node 版本写法
-const nvmNodeVersionRegexp = /^(v)?(0|[1-9]\d{0,1})(\.(0|[1-9]\d*)){0,2}$/;
+// 安装其他版本的选项
+const installOthersOption = "Install Others";
 /**
  * 注册 use-version 命令
  */
-export function registerUseVersionCommand(context: vscode.ExtensionContext) {
+export function registerUseVersionCommand(ctx: vscode.ExtensionContext) {
   const commandId = "auto-nvm.use-version";
-  const commandHandler = () => {
+  const commandHandler = async () => {
+    const versionsInstalled = await getNodeVersionsInstalled();
     // 显示输入框
-    vscode.window
-      .showInputBox({
-        prompt: "enter the node version", // 输入框的提示信息
-        placeHolder: "eg. 20, v20, 20.11.0, v20.11.0", // 输入框的占位符
-        validateInput: (version) => {
-          // 验证输入的函数
-          if (!nvmNodeVersionRegexp.test(version)) {
-            return "invalid version";
-          }
-          return null;
-        },
-      })
-      .then((version) => {
-        if (version) {
-          executeNvmUse(version);
-          vscode.window.showInformationMessage(
-            `"nvm use ${version}" command has been sent, please check terminals`
-          );
-        }
-      });
+    const pickedVersion = await vscode.window.showQuickPick(
+      versionsInstalled.concat(installOthersOption)
+    );
+    pickedVersion && useVersionHandler(ctx, pickedVersion);
   };
-  context.subscriptions.push(
+  ctx.subscriptions.push(
     vscode.commands.registerCommand(commandId, commandHandler)
   );
+}
+
+/**
+ * 切换版本处理函数
+ * @param version
+ */
+function useVersionHandler(ctx: vscode.ExtensionContext, version: string) {
+  if (version === installOthersOption) {
+    console.log(installOthersOption);
+    showNotInstalledNodeVersions(ctx);
+    return;
+  }
+  executeNvmUse(version);
+  setLatestPickedVersion(ctx, version);
+  vscode.window.showInformationMessage(`Node version switched to ${version}`);
+}
+
+async function showNotInstalledNodeVersions(ctx: vscode.ExtensionContext) {
+  const versions = await getNodeVersionsNotInstalled();
+  console.log(versions);
+  const pickedVersion = await vscode.window.showQuickPick(versions);
+  if (!pickedVersion) {
+    return;
+  }
+  setLatestPickedVersion(ctx, pickedVersion);
+  const terminals = vscode.window.terminals;
+  if (terminals.length) {
+    terminals.forEach((t) => t.sendText(`nvm install ${pickedVersion}`));
+  }
 }

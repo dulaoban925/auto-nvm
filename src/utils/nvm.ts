@@ -2,6 +2,9 @@
  * 工具函数
  */
 import * as vscode from "vscode";
+import { exec } from "node:child_process";
+import { join } from "node:path";
+import https from "node:https";
 
 /**
  * 终端 t 发送 nvm use
@@ -13,7 +16,13 @@ function sendNvmUseText(t: vscode.Terminal, version: string | null = "") {
 /**
  * 为 vscode 每个打开的终端执行 “nvm use”，切换 node 版本
  */
-export function executeNvmUse(version?: string) {
+export async function executeNvmUse(version?: string) {
+  // 是否通过 nvm 安装过 node
+  const versions = await getNodeVersionsInstalled();
+  if (!versions.length) {
+    vscode.window.showInformationMessage(`Please install node versions by nvm`);
+    return;
+  }
   // 获取打开的终端列表
   const terminals = vscode.window.terminals;
   if (terminals.length) {
@@ -29,4 +38,27 @@ export function initNvmUse(context: vscode.ExtensionContext) {
   executeNvmUse();
   // 监听终端创建事件，创建终端后首先切换 node 版本
   context.subscriptions.push(vscode.window.onDidOpenTerminal(sendNvmUseText));
+}
+
+/**
+ * 获取已安装的 node 版本列表
+ */
+export function getNodeVersionsInstalled(): Promise<string[]> {
+  return new Promise((resolve) => {
+    exec(`ls ${join("$NVM_DIR", "versions/node")}`, (err, stdout, stderr) => {
+      resolve(err || stderr ? [] : stdout.split("\n").filter((v) => !!v));
+    });
+  });
+}
+
+/**
+ * 获取可使用 nvm 安装的 node 版本列表
+ */
+export function getNodeVersionsNotInstalled(): Promise<string[]> {
+  return new Promise((resolve) => {
+    exec("npm view node versions --json", (error, stdout) => {
+      console.log(JSON.parse(stdout), stdout);
+      resolve(error ? [] : JSON.parse(stdout));
+    });
+  });
 }
