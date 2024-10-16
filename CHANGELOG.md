@@ -6,16 +6,15 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
-- Verify the nvm tool is installed locally.
-- Get a list of node versions installed by nvm for selection by the **use-version** command.
-- The **use-version** command provides an "install other version" option.
+- Add "uninstall" button to uninstall installed version.
+- Add a new sidebar view panel to conveniently manage Node.js versions.
 
 ## [0.0.1]
 
 ### Added
 
-- Automatically switch node version according to **.nvmrc** after opening the project.
-- Use **use-version** command to manually switch node versions.
+- Automatically switch Node.js version according to **.nvmrc** after opening the project.
+- Use **use-version** command to manually switch Node.js versions.
 
 ## [0.0.2]
 
@@ -23,8 +22,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Fixed the extension entry file error issue.
 
-## [0.0.3]
+## [0.1.0]
 
-### Changed
+### Added
 
-- Adjust The extension activation timing to the workspace containing the .nvmrc file.
+- Verify the nvm tool is installed locally.
+- show a list of Node.js versions installed for selection by the **use-version** command.
+- The **use-version** command provides an "install others" option and show all Node.js versions when picked.

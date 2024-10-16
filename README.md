@@ -1,4 +1,4 @@
-# auto-nvm README
+# auto-nvm
 
 A vscode extension that simplifies node version management.
 
