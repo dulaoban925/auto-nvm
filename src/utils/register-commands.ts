@@ -20,7 +20,10 @@ export function registerUseVersionCommand(ctx: vscode.ExtensionContext) {
     const versionsInstalled = await getNodeVersionsInstalled();
     // 显示输入框
     const pickedVersion = await vscode.window.showQuickPick(
-      versionsInstalled.concat(installOthersOption)
+      versionsInstalled.concat(installOthersOption),
+      {
+        title: "Pick specified version",
+      }
     );
     pickedVersion && useVersionHandler(ctx, pickedVersion);
   };
@@ -47,7 +50,9 @@ function useVersionHandler(ctx: vscode.ExtensionContext, version: string) {
 async function showNotInstalledNodeVersions(ctx: vscode.ExtensionContext) {
   const versions = await getNodeVersionsNotInstalled();
   console.log(versions);
-  const pickedVersion = await vscode.window.showQuickPick(versions);
+  const pickedVersion = await vscode.window.showQuickPick(versions, {
+    title: "Install and use specified version",
+  });
   if (!pickedVersion) {
     return;
   }
