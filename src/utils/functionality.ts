@@ -1,21 +1,20 @@
 import * as vscode from "vscode";
-import { exec } from "node:child_process";
 import https from "node:https";
 import { showMessage } from "./common";
 
 // 工作空间暂存上次选择的 node 版本 key
-const WORKSPACE_STATE_LATEST_PICKED_VERSION_KEY = `latest_picked_node_version`;
+const WORKSPACE_STATE_LAST_PICKED_VERSION_KEY = `last_picked_node_version`;
 
 /**
  * 暂存上次选择的 node 版本
  * @param ctx
  * @param version
  */
-export function setLatestPickedVersion(
+export function setLastPickedVersion(
   ctx: vscode.ExtensionContext,
   version: string
 ) {
-  ctx.workspaceState.update(WORKSPACE_STATE_LATEST_PICKED_VERSION_KEY, version);
+  ctx.workspaceState.update(WORKSPACE_STATE_LAST_PICKED_VERSION_KEY, version);
 }
 
 /**
@@ -23,10 +22,10 @@ export function setLatestPickedVersion(
  * @param ctx
  * @returns
  */
-export function getLatestPickedVersion(
+export function getLastPickedVersion(
   ctx: vscode.ExtensionContext
 ): string | undefined {
-  return ctx.workspaceState.get(WORKSPACE_STATE_LATEST_PICKED_VERSION_KEY);
+  return ctx.workspaceState.get(WORKSPACE_STATE_LAST_PICKED_VERSION_KEY);
 }
 
 /**
@@ -39,7 +38,7 @@ export function sortPickedVersions(
   ctx: vscode.ExtensionContext,
   versions: string[]
 ): string[] {
-  const latestPickedVersion = getLatestPickedVersion(ctx);
+  const latestPickedVersion = getLastPickedVersion(ctx);
   return latestPickedVersion && versions.includes(latestPickedVersion)
     ? [
         latestPickedVersion,

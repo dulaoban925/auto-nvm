@@ -4,14 +4,13 @@
 import * as vscode from "vscode";
 import { executeNvmUse, getNodeVersionsInstalled } from "./nvm";
 import {
-  setLatestPickedVersion,
+  setLastPickedVersion,
   sortPickedVersions,
   getRemoteNodeVersions,
   executeCommandTask,
-  getLatestPickedVersion,
+  getLastPickedVersion,
 } from "./functionality";
 import { showMessage } from "./common";
-import { version } from "os";
 
 // 安装其他版本的选项
 const INSTALL_OTHERS_OPTION = "Install Others";
@@ -40,7 +39,7 @@ function formatQuickPickItems(
   ctx: vscode.ExtensionContext,
   versions: string[]
 ): vscode.QuickPickItem[] {
-  const lastPickedVersion = getLatestPickedVersion(ctx);
+  const lastPickedVersion = getLastPickedVersion(ctx);
   return [...sortPickedVersions(ctx, versions), INSTALL_OTHERS_OPTION].map(
     (v) => ({
       description: v,
@@ -59,7 +58,7 @@ function useVersionHandler(ctx: vscode.ExtensionContext, version: string) {
     return;
   }
   executeNvmUse(version);
-  setLatestPickedVersion(ctx, version);
+  setLastPickedVersion(ctx, version);
   showMessage("info", `"nvm use ${version}" command executed successfully.`);
 }
 
