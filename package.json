@@ -32,7 +32,7 @@
     "commands": [
       {
         "command": "auto-nvm.use-version",
-        "title": "use-version",
+        "title": "Use Node Version",
         "description": "use specified version"
       }
     ]
