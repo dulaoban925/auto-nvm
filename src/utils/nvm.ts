@@ -4,7 +4,7 @@
 import * as vscode from "vscode";
 import { exec } from "node:child_process";
 import { join } from "node:path";
-import https from "node:https";
+import { showMessage } from "./common";
 
 /**
  * 终端 t 发送 nvm use
@@ -20,7 +20,7 @@ export async function executeNvmUse(version?: string) {
   // 是否通过 nvm 安装过 node
   const versions = await getNodeVersionsInstalled();
   if (!versions.length) {
-    vscode.window.showInformationMessage(`Please install node versions by nvm`);
+    showMessage("warn", "Please install node versions by nvm");
     return;
   }
   // 获取打开的终端列表
@@ -47,18 +47,6 @@ export function getNodeVersionsInstalled(): Promise<string[]> {
   return new Promise((resolve) => {
     exec(`ls ${join("$NVM_DIR", "versions/node")}`, (err, stdout, stderr) => {
       resolve(err || stderr ? [] : stdout.split("\n").filter((v) => !!v));
-    });
-  });
-}
-
-/**
- * 获取可使用 nvm 安装的 node 版本列表
- */
-export function getNodeVersionsNotInstalled(): Promise<string[]> {
-  return new Promise((resolve) => {
-    exec("npm view node versions --json", (error, stdout) => {
-      console.log(JSON.parse(stdout), stdout);
-      resolve(error ? [] : JSON.parse(stdout));
     });
   });
 }

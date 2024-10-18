@@ -2,12 +2,14 @@
  * 注册命令函数
  */
 import * as vscode from "vscode";
+import { executeNvmUse, getNodeVersionsInstalled } from "./nvm";
 import {
-  executeNvmUse,
-  getNodeVersionsInstalled,
-  getNodeVersionsNotInstalled,
-} from "./nvm";
-import { setLatestPickedVersion, sortPickedVersions } from "./utils";
+  setLatestPickedVersion,
+  sortPickedVersions,
+  getRemoteNodeVersions,
+  executeCommandTask,
+} from "./functionality";
+import { showMessage } from "./common";
 
 // 安装其他版本的选项
 const installOthersOption = "Install Others";
@@ -38,25 +40,21 @@ export function registerUseVersionCommand(ctx: vscode.ExtensionContext) {
  */
 function useVersionHandler(ctx: vscode.ExtensionContext, version: string) {
   if (version === installOthersOption) {
-    showNotInstalledNodeVersions(ctx);
+    showRemoteNodeVersions();
     return;
   }
   executeNvmUse(version);
   setLatestPickedVersion(ctx, version);
-  vscode.window.showInformationMessage(`Node version switched to ${version}`);
+  showMessage("info", `"nvm use ${version}" command executed successfully.`);
 }
 
-async function showNotInstalledNodeVersions(ctx: vscode.ExtensionContext) {
-  const versions = await getNodeVersionsNotInstalled();
+/**
+ * 展示完整 node 版本列表，并选择安装
+ */
+async function showRemoteNodeVersions() {
+  const versions = await getRemoteNodeVersions();
   const pickedVersion = await vscode.window.showQuickPick(versions, {
     title: "Install and use specified version",
   });
-  if (!pickedVersion) {
-    return;
-  }
-  setLatestPickedVersion(ctx, pickedVersion);
-  const terminals = vscode.window.terminals;
-  if (terminals.length) {
-    terminals.forEach((t) => t.sendText(`nvm install ${pickedVersion}`));
-  }
+  pickedVersion && executeCommandTask(`nvm install ${pickedVersion}`);
 }
