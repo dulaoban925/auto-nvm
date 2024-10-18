@@ -5,6 +5,7 @@ import * as vscode from "vscode";
 import { exec } from "node:child_process";
 import { join } from "node:path";
 import { showMessage } from "./common";
+import { getLastPickedVersion, setLastPickedVersion } from "./functionality";
 
 /**
  * 终端 t 发送 nvm use
@@ -33,11 +34,18 @@ export async function executeNvmUse(version?: string) {
 /**
  * 插件 active 时初始执行
  */
-export function initNvmUse(context: vscode.ExtensionContext) {
+export function initNvmUse(ctx: vscode.ExtensionContext) {
+  // 插件激活时重置 lastPickedVersion
+  setLastPickedVersion(ctx, "");
   // 为 vscode 每个打开的终端执行 “nvm use”
   executeNvmUse();
   // 监听终端创建事件，创建终端后首先切换 node 版本
-  context.subscriptions.push(vscode.window.onDidOpenTerminal(sendNvmUseText));
+  ctx.subscriptions.push(
+    vscode.window.onDidOpenTerminal((t) => {
+      const lastPickedVersion = getLastPickedVersion(ctx);
+      sendNvmUseText(t, lastPickedVersion);
+    })
+  );
 }
 
 /**
