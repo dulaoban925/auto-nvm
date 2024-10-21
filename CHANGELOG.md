@@ -46,3 +46,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Optimize remote Node.js versions acquisition method.
 - Change the installation method of Node.js version.
 - Improve experience of picking Node.js version.
+
+## [1.1.1]
+
+### Added
+
+- Added verification of whether **.nvmrc** exists and prompts if not exist.
+
+### Change
+
+- Adjust activationEvents to **onStartupFinished**.
