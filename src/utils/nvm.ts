@@ -52,6 +52,8 @@ export async function initNvmUse(ctx: vscode.ExtensionContext) {
   // 监听终端创建事件，创建终端后首先切换 node 版本
   ctx.subscriptions.push(
     vscode.window.onDidOpenTerminal((t) => {
+      // 若终端是有 Task 调起的，不执行 `nvm use`
+      if (t.creationOptions?.name?.includes("Task")) return;
       const lastPickedVersion = getLastPickedVersion(ctx);
       sendNvmUseText(t, lastPickedVersion);
     })

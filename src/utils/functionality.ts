@@ -95,7 +95,7 @@ export async function executeCommandTask(command: string) {
   const task = new vscode.Task(
     { type: "shell" },
     vscode.TaskScope.Workspace,
-    "Auto-nvm Command",
+    "Auto-nvm Task",
     "auto-nvm",
     new vscode.ShellExecution(command, {
       cwd: rootPath,
