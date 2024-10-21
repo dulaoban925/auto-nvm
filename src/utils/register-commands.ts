@@ -20,18 +20,51 @@ const INSTALL_OTHERS_OPTION = "Install Others";
 export function registerUseVersionCommand(ctx: vscode.ExtensionContext) {
   const commandId = "auto-nvm.use-version";
   const commandHandler = async () => {
-    const versionsInstalled = await getNodeVersionsInstalled();
-    const items = formatQuickPickItems(ctx, versionsInstalled);
-    console.log("🚀 ~ commandHandler ~ items:", items);
-    // 显示输入框
-    const pickedItem = await vscode.window.showQuickPick(items, {
-      title: "Pick specified version",
-    });
-    const pickedVersion = pickedItem?.description;
-    pickedVersion && useVersionHandler(ctx, pickedVersion);
+    showNodeVersionsQuickPick(ctx);
   };
   ctx.subscriptions.push(
     vscode.commands.registerCommand(commandId, commandHandler)
+  );
+}
+
+/**
+ * node 版本选择窗
+ */
+async function showNodeVersionsQuickPick(ctx: vscode.ExtensionContext) {
+  const versionsInstalled = await getNodeVersionsInstalled();
+  const items = formatQuickPickItems(ctx, versionsInstalled);
+  const quickPick = vscode.window.createQuickPick();
+  quickPick.title = "Pick specified version";
+  quickPick.items = items;
+  quickPick.buttons = [
+    {
+      iconPath: new vscode.ThemeIcon("remove-close"),
+      tooltip: "uninstall",
+    },
+  ];
+  quickPick.show();
+  quickPick.onDidChangeSelection((selected) => {
+    if (selected[0]) {
+      const pickedVersion = selected[0].description;
+      useVersionHandler(ctx, pickedVersion!);
+      quickPick.dispose();
+    }
+  });
+  quickPick.onDidTriggerItemButton(
+    ({
+      button,
+      item,
+    }: vscode.QuickPickItemButtonEvent<vscode.QuickPickItem>) => {
+      if (button.tooltip === "uninstall") {
+        const uninstallCommand = `nvm uninstall ${item.description}`;
+        executeCommandTask(uninstallCommand);
+        showMessage(
+          "info",
+          `"${uninstallCommand}" command executed successfully.`
+        );
+        quickPick.dispose();
+      }
+    }
   );
 }
 
@@ -44,8 +77,14 @@ function formatQuickPickItems(
     (v) => ({
       description: v,
       label: lastPickedVersion && lastPickedVersion === v ? "※" : "",
+      buttons: [
+        {
+          iconPath: new vscode.ThemeIcon("remove-close"),
+          tooltip: "uninstall",
+        },
+      ] as vscode.QuickInputButton[],
     })
-  ) as vscode.QuickPickItem[];
+  );
 }
 
 /**
