@@ -1,9 +1,22 @@
 import * as vscode from "vscode";
 import https from "node:https";
-import { showMessage } from "./common";
+import { getWorkspaceRootPath, showMessage } from "./common";
 
 // 工作空间暂存上次选择的 node 版本 key
 const WORKSPACE_STATE_LAST_PICKED_VERSION_KEY = `last_picked_node_version`;
+
+/**
+ * 工作区是否存在 .nvmrc 文件
+ */
+export async function hasNvmrc() {
+  const rootPath = getWorkspaceRootPath();
+  if (!rootPath) {
+    return;
+  }
+  // 匹配工作区 .nvmrc
+  const nvmrcPattern = new vscode.RelativePattern(rootPath, ".nvmrc");
+  return !!(await vscode.workspace.findFiles(nvmrcPattern))?.length;
+}
 
 /**
  * 暂存上次选择的 node 版本

@@ -5,7 +5,11 @@ import * as vscode from "vscode";
 import { exec } from "node:child_process";
 import { join } from "node:path";
 import { showMessage } from "./common";
-import { getLastPickedVersion, setLastPickedVersion } from "./functionality";
+import {
+  getLastPickedVersion,
+  hasNvmrc,
+  setLastPickedVersion,
+} from "./functionality";
 
 /**
  * 终端 t 发送 nvm use
@@ -21,7 +25,7 @@ export async function executeNvmUse(version?: string) {
   // 是否通过 nvm 安装过 node
   const versions = await getNodeVersionsInstalled();
   if (!versions.length) {
-    showMessage("warn", "Please install node versions by nvm");
+    showMessage("warn", "Please install Node.js versions by nvm");
     return;
   }
   // 获取打开的终端列表
@@ -34,9 +38,15 @@ export async function executeNvmUse(version?: string) {
 /**
  * 插件 active 时初始执行
  */
-export function initNvmUse(ctx: vscode.ExtensionContext) {
+export async function initNvmUse(ctx: vscode.ExtensionContext) {
   // 插件激活时重置 lastPickedVersion
   setLastPickedVersion(ctx, "");
+  // 若不存在.nvmrc，则提示
+  const existNvmrc = await hasNvmrc();
+  if (!existNvmrc) {
+    showMessage("warn", ".nvmrc not found.");
+    return;
+  }
   // 为 vscode 每个打开的终端执行 “nvm use”
   executeNvmUse();
   // 监听终端创建事件，创建终端后首先切换 node 版本

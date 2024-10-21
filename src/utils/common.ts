@@ -35,3 +35,11 @@ export function showMessage<T extends string>(
 ) {
   MESSAGE_TYPE_VSC_API_MAP[type](text, options, ...items);
 }
+
+/**
+ * 获取工作区根路径
+ * @returns
+ */
+export function getWorkspaceRootPath() {
+  return vscode.workspace.workspaceFolders?.[0].uri.fsPath ?? "";
+}
