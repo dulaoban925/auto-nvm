@@ -8,7 +8,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - [Added] Add "uninstall" button to uninstall specified Node.js version.
 - [Added] Add a sidebar view panel to conveniently manage Node.js versions.
-- [Fixed] Not automatically execute "nvm use" while no `.nvmrc` in the workspace.
 
 ## [0.0.1]
 
