@@ -6,7 +6,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
-- [Added] Add "uninstall" button to uninstall specified Node.js version.
 - [Added] Add a sidebar view panel to conveniently manage Node.js versions.
 
 ## [0.0.1]
@@ -55,3 +54,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Change
 
 - Adjust activationEvents to **onStartupFinished**.
+
+## [1.1.2]
+
+### Added
+
+- Add "uninstall" button to uninstall specified Node.js version.
+- don't execute "nvm use" in terminals started by Task.
