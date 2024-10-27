@@ -61,3 +61,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Add "uninstall" button to uninstall specified Node.js version.
 - don't execute "nvm use" in terminals started by Task.
+
+## [1.1.3]
+
+### Fixed
+
+- Fixed the problem of the extension not working when not exist .nvmrc.
