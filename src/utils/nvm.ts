@@ -41,21 +41,25 @@ export async function executeNvmUse(version?: string) {
 export async function initNvmUse(ctx: vscode.ExtensionContext) {
   // 插件激活时重置 lastPickedVersion
   setLastPickedVersion(ctx, "");
-  // 若不存在.nvmrc，则提示
   const existNvmrc = await hasNvmrc();
-  if (!existNvmrc) {
+  if (existNvmrc) {
+    // 为 vscode 每个打开的终端执行 “nvm use”
+    executeNvmUse();
+  } else {
+    // 若不存在.nvmrc，则提示
     showMessage("warn", ".nvmrc not found.");
-    return;
   }
-  // 为 vscode 每个打开的终端执行 “nvm use”
-  executeNvmUse();
   // 监听终端创建事件，创建终端后首先切换 node 版本
   ctx.subscriptions.push(
-    vscode.window.onDidOpenTerminal((t) => {
+    vscode.window.onDidOpenTerminal(async (t) => {
       // 若终端是有 Task 调起的，不执行 `nvm use`
       if (t.creationOptions?.name?.includes("Task")) return;
       const lastPickedVersion = getLastPickedVersion(ctx);
-      sendNvmUseText(t, lastPickedVersion);
+      const existNvmrc = await hasNvmrc();
+      // 仅在存在 .nvmrc 或用户手动选择切换版本时执行 `nvm use`
+      if (existNvmrc || lastPickedVersion) {
+        sendNvmUseText(t, lastPickedVersion);
+      }
     })
   );
 }
